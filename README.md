@@ -40,3 +40,6 @@ HTML, CSS, JavaScript → for basic structure and styling
 ** Note **
 This project is currently in development.
 All animations are based on Indian Sign Language (ISL) and created for educational and research purposes.
+> Character base model taken from [Mixamo](https://www.mixamo.com/) by Adobe.
+> All sign animations are created by me.
+
