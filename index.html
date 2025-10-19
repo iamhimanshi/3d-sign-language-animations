@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Interpreter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="ui-container">
+        <h1>Sign Language Interpreter</h1>
+        <div id="controls">
+            <button id="btn-idle">🔄 Idle</button>
+            <button id="btn-hello">👋 Hello</button>
+            <button id="btn-thank-you">🙏 Thank You</button>
+            <button id="btn-bye">👋 Bye</button>
+        </div>
+        <div id="status">Ready to sign...</div>
+    </div>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading character and animations...</p>
+    </div>
+
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Our Main Script -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
