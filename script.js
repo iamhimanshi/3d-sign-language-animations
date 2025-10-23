@@ -216,6 +216,21 @@ function setupEventListeners() {
         showCharacter('bye');
     });
 
+    document.getElementById('btn-good-evening').addEventListener('click', () => {
+        console.log('🎯 GOOD EVENING button clicked');
+        showCharacter('good_evening');
+    });
+
+    document.getElementById('btn-good-afternoon').addEventListener('click', () => {
+        console.log('🎯 GOOD AFTERNOON button clicked');
+        showCharacter('good_afternoon');
+    });
+
+    document.getElementById('btn-good-morning').addEventListener('click', () => {
+        console.log('🎯 GOOD MORNING button clicked');
+        showCharacter('good_morning');
+    });
+
     // Keyboard shortcuts
     window.addEventListener('keydown', (event) => {
         switch(event.key) {
