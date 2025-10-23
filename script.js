@@ -1,7 +1,6 @@
-// Global variables
 let scene, camera, renderer;
 let currentCharacter = null;
-let characters = new Map(); // Store all character instances
+let characters = new Map(); // to store loaded characters
 const clock = new THREE.Clock();
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -53,11 +52,14 @@ function loadAllCharacters() {
         
         const loader = new THREE.GLTFLoader();
         
-        // 🎯 LOAD EACH CHARACTER WITH ITS OWN ANIMATION
+        // load characters and their animations
         loadCharacter(loader, 'idle', 'model/idle.glb');
         loadCharacter(loader, 'hello', 'model/animations/hello.glb');
         loadCharacter(loader, 'thank_you', 'model/animations/thankyou.glb');
         loadCharacter(loader, 'bye', 'model/animations/bye.glb');
+        loadCharacter(loader, 'good_evening', 'model/animations/good_evening.glb');
+        loadCharacter(loader, 'good_afternoon', 'model/animations/good_afternoon.glb');
+        loadCharacter(loader, 'good_morning', 'model/animations/good_morning.glb');
     };
     document.head.appendChild(script);
 }
@@ -72,26 +74,26 @@ function loadCharacter(loader, characterName, filePath) {
             scene: gltf.scene,
             mixer: null,
             animations: gltf.animations || [],
-            action: null // 🎯 NEW: Store the current action
+            action: null 
         };
         
-        // Set up the character
+        //  character setup
         character.scene.scale.set(1, 1, 1);
         character.scene.position.set(0, 0, 0);
-        character.scene.visible = false; // Hide initially
+        character.scene.visible = false; 
         
-        // Create animation mixer for this character
+        // create animation mixer for 3d character
         if (character.animations.length > 0) {
             character.mixer = new THREE.AnimationMixer(character.scene);
             
-            // 🎯 FIX: For idle character, immediately start playing idle animation
+            // setting character in idle animation
             if (characterName === 'idle') {
-                const clip = character.animations[1] || character.animations[0]; // Use second animation or first
+                const clip = character.animations[1] || character.animations[0]; 
                 character.action = character.mixer.clipAction(clip);
                 character.action.setLoop(THREE.LoopRepeat);
                 console.log(`🔄 ${characterName}: Idle animation ready`);
             } else {
-                // For other characters, just store the animation clip
+                
                 const clip = character.animations[0];
                 character.action = character.mixer.clipAction(clip);
                 character.action.setLoop(THREE.LoopOnce);
@@ -100,32 +102,31 @@ function loadCharacter(loader, characterName, filePath) {
             }
         }
         
-        // Store the character
+        // store character
         characters.set(characterName, character);
         scene.add(character.scene);
         
         console.log(`✅ ${characterName} setup complete`);
         
-        // Show loading progress
+        // loading status
         updateStatus(`Loaded: ${characterName}`);
         
-        // If all characters are loaded, hide loading screen
         if (characters.size >= 4) {
             setTimeout(() => {
                 document.body.classList.add('loaded');
-                // Show the idle character by default and START ITS ANIMATION
+
                 showCharacter('idle');
                 updateStatus('Ready! Click any button to sign');
                 console.log('🎉 ALL CHARACTERS LOADED!', Array.from(characters.keys()));
             }, 1000);
         }
-        
+      
     }, 
-    // Progress callback
+    
     function(xhr) {
         console.log(`${characterName}: ${(xhr.loaded / xhr.total * 100).toFixed(1)}%`);
     },
-    // Error callback
+    // 
     function(error) {
         console.error(`❌ Failed to load ${characterName}:`, error);
     });
@@ -134,40 +135,40 @@ function loadCharacter(loader, characterName, filePath) {
 function showCharacter(characterName) {
     console.log(`🎯 Showing character: ${characterName}`);
     
-    // Hide all characters first
+  
     characters.forEach((character, name) => {
         character.scene.visible = false;
-        // 🎯 FIX: Stop all animations when hiding characters
+       
         if (character.mixer && character.action) {
             character.action.stop();
         }
     });
     
-    // Show the requested character
+   
     const character = characters.get(characterName);
     if (character) {
         character.scene.visible = true;
         currentCharacter = characterName;
         
-        // 🎯 FIX: ALWAYS PLAY THE CHARACTER'S ANIMATION WHEN SHOWING IT
+       
         if (character.mixer && character.action) {
             console.log(`🎬 Playing ${characterName} animation`);
             
-            character.mixer.stopAllAction(); // Stop any previous actions
+            character.mixer.stopAllAction(); 
             
             if (characterName === 'idle') {
-                // For idle character, play in loop
+                // idle animation in loop
                 character.action.setLoop(THREE.LoopRepeat);
                 character.action.play();
                 console.log(`🔄 ${characterName}: Playing idle animation (looping)`);
             } else {
-                // For other characters, play once
+
                 character.action.setLoop(THREE.LoopOnce);
                 character.action.clampWhenFinished = true;
                 character.action.play();
                 console.log(`🎬 ${characterName}: Playing sign animation (once)`);
                 
-                // Return to idle after animation completes
+             
                 const duration = character.action.getClip().duration * 1000;
                 console.log(`⏰ Will return to idle in ${duration}ms`);
                 
@@ -195,7 +196,7 @@ function updateStatus(message) {
 }
 
 function setupEventListeners() {
-    // Button listeners
+    // to add new sign button    
     document.getElementById('btn-idle').addEventListener('click', () => {
         console.log('🎯 IDLE button clicked');
         showCharacter('idle');
@@ -231,17 +232,7 @@ function setupEventListeners() {
         showCharacter('good_morning');
     });
 
-    // Keyboard shortcuts
-    window.addEventListener('keydown', (event) => {
-        switch(event.key) {
-            case '0': showCharacter('idle'); break;
-            case '1': showCharacter('hello'); break;
-            case '2': showCharacter('thank_you'); break;
-            case '3': showCharacter('bye'); break;
-        }
-    });
-
-    // Window resize
+    
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -254,7 +245,7 @@ function animate() {
     
     const delta = clock.getDelta();
     
-    // Update all character animations
+
     characters.forEach((character) => {
         if (character.mixer) {
             character.mixer.update(delta);
@@ -264,7 +255,7 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// 🎯 DEBUG FUNCTIONS
+    //  
 window.showCharacters = function() {
     console.log('🔍 LOADED CHARACTERS:', Array.from(characters.keys()));
     characters.forEach((character, name) => {
@@ -280,7 +271,7 @@ window.testCharacter = function(characterName) {
     showCharacter(characterName);
 };
 
-// 🎯 Check idle character animation specifically
+     // checking idle status
 window.checkIdle = function() {
     const idleChar = characters.get('idle');
     if (idleChar) {
@@ -302,7 +293,7 @@ window.checkIdle = function() {
     }
 };
 
-// 🎯 EMERGENCY: Force hide loading screen after 10 seconds
+  
 setTimeout(() => {
     if (!document.body.classList.contains('loaded')) {
         console.log('🆘 EMERGENCY: Forcing loading screen to hide');
